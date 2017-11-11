@@ -39,27 +39,25 @@ public class MergeSort<T extends Comparable> implements Sorter<T> {
 		int k = delta + 1;
 		if (k >= b)
 			return;
-		while (true) {
+		while (j <= delta && k < b) {
 
 			while (j <= delta && list.get(j).compareTo(list.get(k)) <= 0) {
 				temp.add(list.get(j));
 				j++;
 			}
-			if (j > delta) {
-				for (; k < b; k++) {
-					temp.add(list.get(k));
-				}
-				break;
-			}
 			while (k < b && list.get(k).compareTo(list.get(j)) <= 0) {
 				temp.add(list.get(k));
 				k++;
 			}
-			if (k >= b) {
-				for (; j <= delta; j++) {
-					temp.add(list.get(j));
-				}
-				break;
+			
+		}
+		if (j > delta) {
+			for (; k < b; k++) {
+				temp.add(list.get(k));
+			}
+		}else{
+			for (; j <= delta; j++) {
+				temp.add(list.get(j));
 			}
 		}
 		for (j = a; j < b; j++) {
@@ -68,5 +66,5 @@ public class MergeSort<T extends Comparable> implements Sorter<T> {
 		temp.clear();
 
 	}
-
+	
 }

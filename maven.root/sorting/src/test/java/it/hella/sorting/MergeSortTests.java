@@ -21,7 +21,7 @@ public class MergeSortTests {
 	private static final Logger logger = LoggerFactory.getLogger(MergeSortTests.class);
 	
 	private static final int MAX_TEST = 1000;
-	private static final int MAX_SIZE = 10000;
+	private static final int MAX_SIZE = 1000;
 	private MergeSort<Integer> sorter;
 
 	@Before
