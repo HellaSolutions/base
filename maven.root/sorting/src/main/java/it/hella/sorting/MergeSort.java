@@ -55,7 +55,7 @@ public class MergeSort<T extends Comparable> implements Sorter<T> {
 			for (; k < b; k++) {
 				temp.add(list.get(k));
 			}
-		}else{
+		}else {
 			for (; j <= delta; j++) {
 				temp.add(list.get(j));
 			}

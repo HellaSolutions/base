@@ -111,9 +111,9 @@ public class MergeSortTests {
 			for (int i = 0; i < MAX_SIZE; i++){
 				random.add(rg.nextInt(MAX_SIZE));
 			}
-			logger.error(Arrays.toString(random.stream().toArray()));
+			logger.debug(Arrays.toString(random.stream().toArray()));
 			sorter.sort(random);
-			logger.error(Arrays.toString(random.stream().toArray()));
+			logger.debug(Arrays.toString(random.stream().toArray()));
 			for(int i = 0; i < MAX_SIZE - 1; i++){
 				assertTrue(random.get(i) <= random.get(i + 1));
 			}
