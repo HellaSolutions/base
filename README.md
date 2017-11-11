@@ -1,0 +1,2 @@
+# base
+Maven parent module
