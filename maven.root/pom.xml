@@ -55,4 +55,5 @@
 			<artifactId>logback-core</artifactId>
 		</dependency>
 	</dependencies>
+	<packaging>pom</packaging>
 </project>
