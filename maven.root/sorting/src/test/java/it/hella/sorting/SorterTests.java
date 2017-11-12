@@ -14,7 +14,6 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@SuppressWarnings("rawtypes")
 public abstract class SorterTests<T extends Sorter<Integer>> {
 	
 	private static final Logger logger = LoggerFactory.getLogger(SorterTests.class);
