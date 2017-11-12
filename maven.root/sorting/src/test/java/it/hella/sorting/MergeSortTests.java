@@ -16,16 +16,12 @@ import org.slf4j.LoggerFactory;
 
 import it.hella.sorting.MergeSort;
 
-public class MergeSortTests {
+public class MergeSortTests extends SorterTests<MergeSort<Integer>>{
 	
 	private static final Logger logger = LoggerFactory.getLogger(MergeSortTests.class);
 	
-	private static final int MAX_TEST = 1000;
-	private static final int MAX_SIZE = 1000;
-	private MergeSort<Integer> sorter;
-
-	@Before
-	public void before(){
+	@Override
+	public void instantiateSorter() {
 		sorter = new MergeSort<Integer>();
 	}
 	
@@ -71,7 +67,7 @@ public class MergeSortTests {
 	public void mergeTestEqualsElements(){
 		
 		List<Integer> list = Arrays.asList(10, 20, 30, 40, 50, 11, 30, 31, 40, 51);
-		sorter.merge(list, 0, 4, 10);
+		((MergeSort<Integer>)sorter).merge(list, 0, 4, 10);
 		assertThat(list, contains(10, 11, 20, 30, 30, 31, 40, 40, 50, 51));
 		
 	}
@@ -94,53 +90,6 @@ public class MergeSortTests {
 		
 	}
 	
-	@Test
-	public void mergeSortTestEven(){
-		
-		List<Integer> list = Arrays.asList(3, 9, 6, 1, 4, 9, 3, 4, 3, 8);
-		sorter.sort(list);
-		assertThat(list, contains(1, 3, 3, 3, 4, 4, 6, 8, 9, 9));
-		
-	}
-	
-	@Test
-	public void mergeSortTestOdd(){
-		
-		List<Integer> list = Arrays.asList(10, 20, 30, 40, 50, 60, 70, 80, 90);
-		sorter.merge(list, 0, 3, 9);
-		assertThat(list, contains(10, 20, 30, 40, 50, 60, 70, 80, 90));
-		
-	}
-	
-	@Test
-	public void mergeSortTestBug(){
-		
-		List<Integer> list = Arrays.asList(1, 6, 0, 1, 6, 5, 1, 0, 6, 0);
-		sorter.sort(list);
-		assertThat(list, contains(0, 0, 0, 1, 1, 1, 5, 6, 6, 6));
-		
-	}
-	
-	@Test
-	public void mergeSortRandomTest(){
-		
-		List<Integer> random = new ArrayList<>();
-		Random rg = new Random();
-		for(int t = 0; t <= MAX_TEST; t++){
-			for (int i = 0; i < MAX_SIZE; i++){
-				random.add(rg.nextInt(MAX_SIZE));
-			}
-			logger.debug(Arrays.toString(random.stream().toArray()));
-			sorter.sort(random);
-			logger.debug(Arrays.toString(random.stream().toArray()));
-			for(int i = 0; i < MAX_SIZE - 1; i++){
-				assertTrue(random.get(i) <= random.get(i + 1));
-			}
-			random.clear();
-			
-		}
-		
-	}
 	
 }
 	
