@@ -73,6 +73,22 @@ public class QuickSortTests extends SorterTests<QuickSort<Integer>> {
 		
 	}
 	
+	@Test
+	public void partitionTest(){
+		
+		List<Integer> list = Arrays.asList(1, 7, 2, 5);
+		int pivot = sorter.partition(list, 2, 0, list.size());
+		
+	}
+	
+	@Test
+	public void partitionTestBug(){
+		
+		List<Integer> list = Arrays.asList(0, 2, 0, 6, 1, 3, 1, 3, 6, 6);
+		sorter.sort(list);
+		
+	}
+
 	private static void assertPartitioned(List<Integer> list, int pivot){
 		
 		for (int i = 0; i < list.size(); i++){
