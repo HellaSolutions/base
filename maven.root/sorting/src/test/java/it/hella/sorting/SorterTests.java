@@ -42,7 +42,7 @@ public abstract class SorterTests<T extends Sorter<Integer>> {
 
 	
 	@Test
-	public void mergeSortRandomTest(){
+	public void sortRandomTest(){
 		
 		if (!randomTestsEnabled){
 			logger.info("Random tests are disabled");
