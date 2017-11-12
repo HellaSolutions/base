@@ -4,6 +4,9 @@ import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
+import java.math.BigDecimal;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -18,8 +21,8 @@ public abstract class SorterTests<T extends Sorter<Integer>> {
 	
 	private static final Logger logger = LoggerFactory.getLogger(SorterTests.class);
 	
-	protected static final int MAX_TEST = 1000;
-	protected static final int MAX_SIZE = 1000;
+	protected static final int MAX_TEST = 10;
+	protected static final int MAX_SIZE = 10000;
 	protected T sorter;
 	
 	private boolean randomTestsEnabled = true;
@@ -51,11 +54,15 @@ public abstract class SorterTests<T extends Sorter<Integer>> {
 		List<Integer> random = new ArrayList<>();
 		Random rg = new Random();
 		for(int t = 0; t <= MAX_TEST; t++){
+			
 			for (int i = 0; i < MAX_SIZE; i++){
 				random.add(rg.nextInt(MAX_SIZE));
 			}
 			logger.debug(Arrays.toString(random.stream().toArray()));
+			Instant start = Instant.now();
 			sorter.sort(random);
+			long nanos = Duration.between(start, Instant.now()).toNanos();
+			logger.debug("elapsed (nano) " + String.valueOf(nanos) + " or " + BigDecimal.valueOf(nanos).divide(BigDecimal.valueOf(10E6)) + " ms");
 			logger.debug(Arrays.toString(random.stream().toArray()));
 			for(int i = 0; i < MAX_SIZE - 1; i++){
 				assertTrue(random.get(i) <= random.get(i + 1));
