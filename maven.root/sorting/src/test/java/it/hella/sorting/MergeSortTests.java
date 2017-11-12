@@ -56,6 +56,7 @@ public class MergeSortTests {
 		
 	}
 	
+	
 	@Test
 	public void mergeTestReversed(){
 		
@@ -94,11 +95,29 @@ public class MergeSortTests {
 	}
 	
 	@Test
-	public void mergeSortTest(){
+	public void mergeSortTestEven(){
 		
 		List<Integer> list = Arrays.asList(3, 9, 6, 1, 4, 9, 3, 4, 3, 8);
 		sorter.sort(list);
 		assertThat(list, contains(1, 3, 3, 3, 4, 4, 6, 8, 9, 9));
+		
+	}
+	
+	@Test
+	public void mergeSortTestOdd(){
+		
+		List<Integer> list = Arrays.asList(10, 20, 30, 40, 50, 60, 70, 80, 90);
+		sorter.merge(list, 0, 3, 9);
+		assertThat(list, contains(10, 20, 30, 40, 50, 60, 70, 80, 90));
+		
+	}
+	
+	@Test
+	public void mergeSortTestBug(){
+		
+		List<Integer> list = Arrays.asList(1, 6, 0, 1, 6, 5, 1, 0, 6, 0);
+		sorter.sort(list);
+		assertThat(list, contains(0, 0, 0, 1, 1, 1, 5, 6, 6, 6));
 		
 	}
 	

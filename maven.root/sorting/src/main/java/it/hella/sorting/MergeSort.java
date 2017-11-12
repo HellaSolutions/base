@@ -20,7 +20,7 @@ public class MergeSort<T extends Comparable> implements Sorter<T> {
 	}
 
 	@SuppressWarnings("unused")
-	private void sort(List<T> list, int a, int b) {
+	private void recursiveSort(List<T> list, int a, int b) {
 
 		if (a >= b - 1){
 			return;
@@ -30,6 +30,24 @@ public class MergeSort<T extends Comparable> implements Sorter<T> {
 		sort(list, delta + 1, b);
 		merge(list, a, delta, b);
 
+	}
+	
+	private void sort(List<T> list, int a, int b) {
+
+		int delta = 2;
+		int limit = list.size();
+		while(delta <= list.size()){
+			int j = 0;
+			while(j <= limit - delta){
+				merge(list, j, j + (delta - 1)/2, j + delta);
+				j += delta;
+			}
+			if (j < limit){
+				merge(list, j - delta, j - 1, limit);
+			}
+			delta = 2*delta;
+		}
+		
 	}
 
 	@SuppressWarnings("unchecked")
