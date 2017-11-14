@@ -21,8 +21,8 @@ public abstract class SorterTests<T extends Sorter<Integer>> {
 	
 	private static final Logger logger = LoggerFactory.getLogger(SorterTests.class);
 	
-	protected static final int MAX_TEST = 10;
-	protected static final int MAX_SIZE = 10000;
+	protected static final int MAX_TEST = 1000;
+	protected static final int MAX_SIZE = 1000;
 	protected T sorter;
 	
 	private boolean randomTestsEnabled = true;
@@ -42,7 +42,6 @@ public abstract class SorterTests<T extends Sorter<Integer>> {
 		assertThat(list, contains(1, 3, 3, 3, 4, 4, 6, 8, 9, 9));
 		
 	}
-
 	
 	@Test
 	public void sortRandomTest(){
@@ -65,7 +64,7 @@ public abstract class SorterTests<T extends Sorter<Integer>> {
 			logger.debug("elapsed (nano) " + String.valueOf(nanos) + " or " + BigDecimal.valueOf(nanos).divide(BigDecimal.valueOf(10E6)) + " ms");
 			logger.debug(Arrays.toString(random.stream().toArray()));
 			for(int i = 0; i < MAX_SIZE - 1; i++){
-				assertTrue(random.get(i) <= random.get(i + 1));
+				assertTrue("Position " + i + " has " + random.get(i) + " > " + random.get(i + 1), random.get(i) <= random.get(i + 1));
 			}
 			random.clear();
 			
