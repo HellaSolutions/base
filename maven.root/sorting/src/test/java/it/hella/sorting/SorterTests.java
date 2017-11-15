@@ -7,22 +7,22 @@ import static org.junit.Assert.assertTrue;
 import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Random;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import it.hella.random.RandomGenerators;
+
 public abstract class SorterTests<T extends Sorter<Integer>> {
 	
 	private static final Logger logger = LoggerFactory.getLogger(SorterTests.class);
 	
-	protected static final int MAX_TEST = 1000;
-	protected static final int MAX_SIZE = 1000;
+	protected static final int MAX_TEST = 10;
+	protected static final int MAX_SIZE = 100;
 	protected T sorter;
 	
 	private boolean randomTestsEnabled = true;
@@ -35,7 +35,7 @@ public abstract class SorterTests<T extends Sorter<Integer>> {
 	public abstract void instantiateSorter();
 	
 	@Test
-	public void sortTestEven(){
+	public void testSort(){
 		
 		List<Integer> list = Arrays.asList(3, 9, 6, 1, 4, 9, 3, 4, 3, 8);
 		sorter.sort(list);
@@ -44,19 +44,15 @@ public abstract class SorterTests<T extends Sorter<Integer>> {
 	}
 	
 	@Test
-	public void sortRandomTest(){
+	public void testSortRandom(){
 		
 		if (!randomTestsEnabled){
 			logger.info("Random tests are disabled");
 			return;
 		}
-		List<Integer> random = new ArrayList<>();
-		Random rg = new Random();
 		for(int t = 0; t <= MAX_TEST; t++){
 			
-			for (int i = 0; i < MAX_SIZE; i++){
-				random.add(rg.nextInt(MAX_SIZE));
-			}
+			List<Integer> random = RandomGenerators.generateList(MAX_SIZE, MAX_SIZE);
 			logger.debug(Arrays.toString(random.stream().toArray()));
 			Instant start = Instant.now();
 			sorter.sort(random);

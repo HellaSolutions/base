@@ -1,8 +1,6 @@
 package it.hella.sorting;
 
-import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
@@ -30,7 +28,7 @@ public class QuickSortTests extends SorterTests<QuickSort<Integer>> {
 	}
 	
 	@Test
-	public void partitionTestCouple(){
+	public void testPartitionCouple(){
 		
 		List<Integer> list = Arrays.asList(7, 1);
 		int pivot = sorter.partition(list, 0, 0, list.size());
@@ -41,7 +39,7 @@ public class QuickSortTests extends SorterTests<QuickSort<Integer>> {
 	}
 	
 	@Test
-	public void partitionTestFirst(){
+	public void testPartitionFirst(){
 		
 		List<Integer> list = Arrays.asList(7, 1, 12, 3, 24, 5);
 		int pivot = sorter.partition(list, 0, 0, list.size());

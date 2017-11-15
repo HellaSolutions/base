@@ -5,17 +5,16 @@ import static org.junit.Assert.assertTrue;
 import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.Random;
 
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import it.hella.heap.Heap;
+import it.hella.random.RandomGenerators;
 
 public class HeapSortTests extends SorterTests<HeapSort<Integer>> {
 	
@@ -58,13 +57,9 @@ public class HeapSortTests extends SorterTests<HeapSort<Integer>> {
 	@Test
 	public void testRandomBuildHeap() {
 
-		Random rg = new Random();
-		List<Integer> list = new ArrayList<>();
 		for(int t = 0; t <= MAX_TEST; t++){
 		
-			for (int i = 0; i < MAX_SIZE; i++){
-				list.add(rg.nextInt(MAX_SIZE));
-			}
+			List<Integer> list = RandomGenerators.generateList(MAX_SIZE, MAX_SIZE);
 			Heap<Integer> heap = new Heap<>(list);
 			logger.debug(Arrays.toString(heap.stream().toArray()));
 			Instant start = Instant.now();

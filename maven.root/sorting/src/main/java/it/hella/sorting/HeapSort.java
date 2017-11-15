@@ -9,6 +9,9 @@ public class HeapSort<T extends Comparable> implements Sorter<T> {
 	@Override
 	public void sort(List<T> list) {
 		
+		if(list == null || list.size() <= 1){
+			return;
+		}
 		Heap<T> heap = new Heap<>(list);
 		Heap.buildMaxHeap(heap);
 		int iterate = heap.size() - 1;
