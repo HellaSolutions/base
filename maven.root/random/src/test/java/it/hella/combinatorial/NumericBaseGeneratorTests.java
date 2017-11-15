@@ -1,4 +1,4 @@
-package random;
+package it.hella.combinatorial;
 
 import static org.junit.Assert.assertEquals;
 
@@ -8,10 +8,10 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import it.hella.combinatorial.BaseGenerator;
+import it.hella.combinatorial.NumericBaseGenerator;
 import it.hella.random.RandomGenerators;
 
-public class BaseGeneratorTests {
+public class NumericBaseGeneratorTests {
 	
 	private static final Logger logger = LoggerFactory.getLogger(RandomGenerators.class);
 
@@ -19,7 +19,7 @@ public class BaseGeneratorTests {
 	public void testBinary(){
 		
 		int length = 10;
-		BaseGenerator generator = new BaseGenerator(30, 2);
+		NumericBaseGenerator generator = new NumericBaseGenerator(30, 2);
 		int iterations = 0;
 		int[] current;
 		do{
@@ -37,7 +37,7 @@ public class BaseGeneratorTests {
 	public void testBase3(){
 		
 		int length = 10;
-		BaseGenerator generator = new BaseGenerator(10, 3);
+		NumericBaseGenerator generator = new NumericBaseGenerator(10, 3);
 		int iterations = 0;
 		int[] current;
 		do{

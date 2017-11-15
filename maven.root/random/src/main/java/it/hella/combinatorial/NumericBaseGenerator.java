@@ -1,11 +1,11 @@
 package it.hella.combinatorial;
 
-public class BaseGenerator{
+public class NumericBaseGenerator{
 	
 	private int[] current;
 	private int maxDigit;
 	
-	public BaseGenerator(int length, int base){
+	public NumericBaseGenerator(int length, int base){
 		
 		if (base < 2){
 			throw new IllegalArgumentException("Base should be greater or equal than 2");

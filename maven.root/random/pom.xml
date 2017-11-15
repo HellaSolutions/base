@@ -5,7 +5,7 @@
     <artifactId>tools</artifactId>
     <version>0.0.1-SNAPSHOT</version>
   </parent>
-  <artifactId>random</artifactId>
-  <name>random-generators</name>
-  <description>Various random generators</description>
+  <artifactId>generators</artifactId>
+  <name>generators</name>
+  <description>Various random and combinatorial generators</description>
 </project>
