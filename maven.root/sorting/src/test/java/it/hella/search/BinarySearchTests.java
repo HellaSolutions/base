@@ -135,4 +135,11 @@ public class BinarySearchTests {
 
 	}
 	
+	@Test
+	public void testBug() {
+
+		assertEquals(-6, BinarySearch.search(Integer.valueOf(110), Arrays.asList(0, 1, 2, 3, 89, 130, 140, 150), 5, 7));
+
+	}
+	
 }
