@@ -10,6 +10,7 @@
 	<modules>
 		<module>sorting</module>
 		<module>random</module>
+		<module>codility-magnanum</module>
 	</modules>
 	<properties>
 		<junit.version>4.12</junit.version>

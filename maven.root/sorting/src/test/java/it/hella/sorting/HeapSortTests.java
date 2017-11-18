@@ -32,7 +32,7 @@ public class HeapSortTests extends SorterTests<HeapSort<Integer>> {
 
 		Heap<Integer> heap = new Heap<>(Arrays.asList(1, 3, 2));
 		Heap.maxHeapify(heap, 0);
-		assertHeap(heap);
+		assertMaxHeap(heap);
 
 	}
 
@@ -41,7 +41,7 @@ public class HeapSortTests extends SorterTests<HeapSort<Integer>> {
 
 		Heap<Integer> heap = new Heap<>(Arrays.asList(5, 16, 14, 10, 8, 7, 9, 3, 2, 4, 1));
 		Heap.maxHeapify(heap, 0);
-		assertHeap(heap);
+		assertMaxHeap(heap);
 
 	}
 	
@@ -50,7 +50,7 @@ public class HeapSortTests extends SorterTests<HeapSort<Integer>> {
 
 		Heap<Integer> heap = new Heap<>(Arrays.asList(3, 45, 6, 1, 8, 21, 67, 8, 10, 3, 7, 5, 3, 2, 4, 1));
 		Heap.buildMaxHeap(heap);
-		assertHeap(heap);
+		assertMaxHeap(heap);
 
 	}
 	
@@ -67,14 +67,14 @@ public class HeapSortTests extends SorterTests<HeapSort<Integer>> {
 			long nanos = Duration.between(start, Instant.now()).toNanos();
 			logger.debug("elapsed (nano) " + String.valueOf(nanos) + " or " + BigDecimal.valueOf(nanos).divide(BigDecimal.valueOf(10E6)) + " ms");
 			logger.debug(Arrays.toString(heap.stream().toArray()));
-			assertHeap(heap);
+			assertMaxHeap(heap);
 			list.clear();
 			
 		}
 		
 	}
 
-	private void assertHeap(Heap<Integer> heap) {
+	private void assertMaxHeap(Heap<Integer> heap) {
 
 		logger.debug(Arrays.toString(heap.stream().toArray()));
 		for (int i = heap.size() - 1; i >= 0; i--) {
