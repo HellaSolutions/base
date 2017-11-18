@@ -71,6 +71,7 @@ public class Heap<T extends Comparable> {
 	
 	@SuppressWarnings("unchecked")
 	public static <T extends Comparable> void maxHeapify(Heap<T> heap, int from) {
+		
 		maxHeapify(heap, from, heap.size());
 	}
 
