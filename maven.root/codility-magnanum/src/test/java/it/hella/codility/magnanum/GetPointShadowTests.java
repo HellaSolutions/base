@@ -56,7 +56,7 @@ public class GetPointShadowTests {
 	}
 	
 	@Test
-	public void testInternalAndBothBoundaryShadow(){
+	public void testInternalAndBothBoundaryShadowMultipleInternal(){
 		
 		Set<Solution.Point> closers = new HashSet<>();
 		PointShadows pointShadow = Solution.getPointShadow(new Solution.Point(100, 0), 10, Arrays.asList(7, 11, 67, 88, 90, 92, 107, 108, 110, 111, 130, 140), closers);
@@ -132,6 +132,54 @@ public class GetPointShadowTests {
 		
 		Set<Solution.Point> closers = new HashSet<>();
 		PointShadows pointShadow = Solution.getPointShadow(new Solution.Point(100, 0), 10, Arrays.asList(7, 11, 67, 88, 89, 91, 109, 120, 130, 140), closers);
+		int[] left = pointShadow.getLeftShadow();
+		int[] right = pointShadow.getRightShadow();
+		assertEquals(0, left.length);
+		assertEquals(0, right.length);
+		
+	}
+	
+	@Test
+	public void testInnerDisjointLeftRightBoundaryShadow(){
+		
+		Set<Solution.Point> closers = new HashSet<>();
+		PointShadows pointShadow = Solution.getPointShadow(new Solution.Point(100, 0), 10, Arrays.asList(110, 120, 130, 140), closers);
+		int[] left = pointShadow.getLeftShadow();
+		int[] right = pointShadow.getRightShadow();
+		assertEquals(0, left.length);
+		assertThat(Arrays.asList(right[0], right[1]), contains(0, 0));
+		
+	}
+	
+	@Test
+	public void testInnerDisjointLeftNoRightBoundaryShadow(){
+		
+		Set<Solution.Point> closers = new HashSet<>();
+		PointShadows pointShadow = Solution.getPointShadow(new Solution.Point(100, 0), 10, Arrays.asList(112, 120, 130, 140), closers);
+		int[] left = pointShadow.getLeftShadow();
+		int[] right = pointShadow.getRightShadow();
+		assertEquals(0, left.length);
+		assertEquals(0, right.length);
+		
+	}
+	
+	@Test
+	public void testInnerDisjointRightLeftBoundaryShadow(){
+		
+		Set<Solution.Point> closers = new HashSet<>();
+		PointShadows pointShadow = Solution.getPointShadow(new Solution.Point(100, 0), 10, Arrays.asList(10, 20, 30, 40, 50, 90), closers);
+		int[] left = pointShadow.getLeftShadow();
+		int[] right = pointShadow.getRightShadow();
+		assertThat(Arrays.asList(left[0], left[1]), contains(5, 5));
+		assertEquals(0, right.length);
+		
+	}
+	
+	@Test
+	public void testInnerDisjointRightNoLeftBoundaryShadow(){
+		
+		Set<Solution.Point> closers = new HashSet<>();
+		PointShadows pointShadow = Solution.getPointShadow(new Solution.Point(100, 0), 10, Arrays.asList(10, 20, 30, 40, 50, 88), closers);
 		int[] left = pointShadow.getLeftShadow();
 		int[] right = pointShadow.getRightShadow();
 		assertEquals(0, left.length);

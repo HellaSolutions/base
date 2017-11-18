@@ -148,9 +148,15 @@ public class Solution {
 
 	static int[] rightClose(int[] interval, int rightLimit, List<Integer> pointsAtLevel) {
 
-		int[] rightShadow;
-		if (interval[0] == -1 && pointsAtLevel.get(0) == rightLimit) {
-			return new int[] { 0, 0 };
+		if (interval[0] == -pointsAtLevel.size() - 1){
+			return new int[]{};
+		}
+		if (interval[0] == -1) {
+			if (pointsAtLevel.get(0) == rightLimit){
+				return new int[] { 0, 0 };
+			}else{
+				return new int[]{};
+			}
 		}
 		if (interval[0] > interval[1]) {
 			int rightBoundary = interval[0] + 1;
@@ -167,9 +173,16 @@ public class Solution {
 
 	static int[] leftClose(int[] interval, int leftLimit, List<Integer> pointsAtLevel) {
 
+		if (interval[0] == -1) {
+			return new int[] {};
+		}
 		int leftBoundary = pointsAtLevel.size() - 1;
-		if (interval[0] == -pointsAtLevel.size() - 1 && pointsAtLevel.get(leftBoundary) == leftLimit) {
-			return new int[] {leftBoundary, leftBoundary };
+		if (interval[0] == -leftBoundary - 2) {
+			if(pointsAtLevel.get(leftBoundary) == leftLimit){
+				return new int[] {leftBoundary, leftBoundary };
+			}else{
+				return new int[]{};
+			}
 		}
 		if (interval[0] > interval[1]) {
 			leftBoundary = interval[1] - 1;
@@ -374,5 +387,7 @@ public class Solution {
 		}
 
 	}
+	
+	
 
 }
