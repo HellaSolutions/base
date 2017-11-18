@@ -67,36 +67,36 @@ public class SolutionPointsInShadowTests {
 	@Test
 	public void testPointFirstNotIn(){
 		
-		int[] interval = Solution.pointsInShadow(new Solution.Point(100, 0), 10, Arrays.asList(70, 91, 98, 99, 100, 101, 102, 103, 110, 107));
+		int[] interval = Solution.pointsInShadow(new Solution.Point(100, 0), 10, Arrays.asList(70, 91, 98, 99, 100, 101, 102, 103, 107, 110));
 		assertEquals(1, interval[0]);
-		assertEquals(8, interval[1]);
+		assertEquals(9, interval[1]);
 		
 	}
 	
 	@Test
 	public void testPointSecondNotIn(){
 		
-		int[] interval = Solution.pointsInShadow(new Solution.Point(100, 0), 10, Arrays.asList(70, 90, 98, 99, 100, 101, 102, 103, 111, 107));
+		int[] interval = Solution.pointsInShadow(new Solution.Point(100, 0), 10, Arrays.asList(70, 90, 98, 99, 100, 101, 102, 103, 107, 111));
 		assertEquals(1, interval[0]);
-		assertEquals(7, interval[1]);
+		assertEquals(8, interval[1]);
 		
 	}
 	
 	@Test
 	public void testPointBothNotIn(){
 		
-		int[] interval = Solution.pointsInShadow(new Solution.Point(100, 0), 10, Arrays.asList(70, 91, 98, 99, 100, 101, 102, 103, 111, 107));
+		int[] interval = Solution.pointsInShadow(new Solution.Point(100, 0), 10, Arrays.asList(70, 91, 98, 99, 100, 101, 102, 103, 107, 111));
 		assertEquals(1, interval[0]);
-		assertEquals(7, interval[1]);
+		assertEquals(8, interval[1]);
 		
 	}
 	
 	@Test
 	public void testPointNoPoints(){
 		
-		int[] interval = Solution.pointsInShadow(new Solution.Point(100, 0), 10, Arrays.asList(0, 1, 2, 3, 120, 1300, 140, 150));
-		assertEquals(4, interval[0]);
-		assertEquals(3, interval[1]);
+		int[] interval = Solution.pointsInShadow(new Solution.Point(100, 0), 10, Arrays.asList(0, 1, 2, 3, 89, 130, 140, 150));
+		assertEquals(5, interval[0]);
+		assertEquals(4, interval[1]);
 		
 	}
 	

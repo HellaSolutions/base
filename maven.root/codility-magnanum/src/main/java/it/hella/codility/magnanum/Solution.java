@@ -1,8 +1,8 @@
 package it.hella.codility.magnanum;
 
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -12,13 +12,9 @@ import java.util.stream.Collectors;
 
 public class Solution {
 
-	private static final XComparator xComparator = new XComparator();
-	private static final YComparator yComparator = new YComparator();
-
 	private List<Integer> levels;
 	private Map<Point, Integer> scores = new HashMap<>();
-	private Map<Integer, LinkedList<Integer>> board = new HashMap<>();
-	private Map<Integer, LinkedList<Integer>> queensAtLevel = new HashMap<>();
+	private Map<Integer, LinkedList<Point>> board = new HashMap<>()
 	private Point startPosition;
 
 	int solution(int X[], int Y[], int N, String T) {
@@ -29,23 +25,22 @@ public class Solution {
 	private void buildDataStructure(int X[], int Y[], int N, String T) {
 
 		Point point;
+		Set<Integer> uniqueLevels = new HashSet<>();
 		for (int i = 0; i < Y.length; i++) {
 
 			char piece = T.charAt(i);
 			point = new Point(X[i], Y[i]);
-			scores.put(point, score(piece));
+			point.setScore(score(piece));
+			scores.put(point, point.getScore());
 			if (piece != 'X') {
-				add(X[i], Y[i], board);
-				if (piece == 'q') {
-					add(X[i], Y[i], queensAtLevel);
-				}
+				add(point, board);
+				uniqueLevels.add(Y[i]);
 			} else {
 				startPosition = point;
 			}
 		}
 		xOrder(board);
-		xOrder(queensAtLevel);
-		levels = board.keySet().parallelStream().collect(Collectors.toList());
+		levels = uniqueLevels.parallelStream().collect(Collectors.toList());
 		Collections.sort(levels);
 
 	}
@@ -63,72 +58,59 @@ public class Solution {
 		}
 	}
 
-	private int evaluateScore() {
+	private void evaluateScoresLastLevel() {
 
-		int levelIndex = levels.size() - 2;
-		int level = levels.get(levelIndex);
-		while (level > startPosition.getY()) {
-			evaluateScore(levelIndex);
-			level = levels.get(--levelIndex);
-		}
-		evaluateScore(startPosition);
-		return scores.get(startPosition);
-
-	}
-
-	private void evaluateScore(Point point) {
-		// TODO Auto-generated method stub
-
-	}
-
-	private void evaluateScore(int levelIndex) {
-
-		List<Integer> points = board.get(levelIndex);
-		int level = levels.get(levelIndex);
-		Map<Point, int[]> intervals = new HashMap<>();
-		for (Integer x : points) {
-			Point point = new Point(x, level);
-			for (int currentLevelIndex = levelIndex + 1; currentLevelIndex < levels.size() - 1; currentLevelIndex++) {
-				int[] pointsInterval;
-				int toLevel = levels.get(currentLevelIndex);
-				if (queensAtLevel.containsKey(toLevel)) {
-					pointsInterval = pointsInShadow(point, toLevel, queensAtLevel.get(toLevel));
-					if (pointsInterval.length > 0) {
-						scores.put(point, scores.get(point) + 10);
-					}
+		int startLevel = levels.size() == 1 ? startPosition.getY() : levels.get(levels.size() - 2);
+		int endLevel = levels.get(levels.size() - 1);
+		List<Point> queensAtEndLevel = queensAtLevel.get(endLevel);
+		List<Point> pawnsAtEndLevel = pawnsAtLevel.get(endLevel);
+		int[] shadow;
+		for(Point point : queensAtLevel.get(startLevel)){
+			shadow = getPointInnerShadow(point, endLevel, queensAtEndLevel);
+			if (shadow.length > 0){
+				int score = point.getScore() + 10;
+				point.setLeftScore(score);
+				point.setRightScore(score);
+			}else{
+				shadow = getPointInnerShadow(point, endLevel, pawnsAtEndLevel);
+				if (shadow.length > 0){
+					int score = point.getScore() + 1;
+					point.setLeftScore(score);
+					point.setRightScore(score);
+				}else{
+					int[] xBounds = point.shadowAtLevel(endLevel);
+					Point leftBound
+					scores.containsKey()
 				}
-				pointsInterval = pointsInShadow(point, toLevel, board.get(toLevel));
-				if (pointsInterval.length == 0) {
-					scores.put(point, scores.get(point) + 0);
-				}
-				scores.put(point, scores.get(point) + 1);
-
 			}
 		}
+		
 
 	}
 
-	private void evaluateScore(List<Integer> levelPoints) {
+	private int[] getPointInnerShadow(Point point, int endLevel, List<Point> queensAtEndLevel) {
 		// TODO Auto-generated method stub
-
+		return null;
 	}
 
-	private void add(int x, int y, Map<Integer, LinkedList<Integer>> list) {
-		if (!list.containsKey(y)) {
-			board.put(y, new LinkedList<>());
+	private void add(Point point, Map<Integer, LinkedList<Point>> queensAtLevel2) {
+
+		int y = point.getY();
+		if (!queensAtLevel2.containsKey(y)) {
+			queensAtLevel2.put(y, new LinkedList<>());
 		}
-		board.get(y).add(x);
+		queensAtLevel2.get(y).add(point);
 	}
 
-	private void xOrder(Map<Integer, LinkedList<Integer>> list) {
-		for (Entry<Integer, LinkedList<Integer>> level : list.entrySet()) {
-			Collections.sort(level.getValue());
+	private void xOrder(Map<Integer, LinkedList<Point>> levelMap) {
+		for (Entry<Integer, LinkedList<Point>> level : levelMap.entrySet()) {
+			Collections.sort(level.getValue(), (p, q) -> p.getX() - q.getX());
 		}
 	}
 
 	static final int[] pointsInShadow(Point point, Integer level, List<Integer> pointsAtLevel) {
 
-		if (point.getY() >= level) {
+		if (point.getY() > level) {
 			return new int[] {};
 		}
 		int[] shadow = point.shadowAtLevel(level);
@@ -138,9 +120,12 @@ public class Solution {
 		if (shadow[0] > pointsAtLevel.get(pointsAtLevel.size() - 1)) {
 			return new int[] { -pointsAtLevel.size() - 1, -pointsAtLevel.size() - 1 };
 		}
-		int lower = Collections.binarySearch(pointsAtLevel, shadow[0]);
-		int upper = Collections.binarySearch(pointsAtLevel, shadow[1]);
+		int lower = BinarySearch.search(shadow[0], pointsAtLevel);
 		int start = lower >= 0 ? lower : -lower - 1;
+		if (shadow[0] == shadow[1]) {
+			return lower > 0 ? new int[] { start, start } : new int[] { start, start - 1 };
+		}
+		int upper = BinarySearch.search(shadow[1], pointsAtLevel, start, pointsAtLevel.size() - 1);
 		int end = upper >= 0 ? upper : -upper - 2;
 		return new int[] { start, end };
 
@@ -148,26 +133,27 @@ public class Solution {
 
 	static int[] rightClose(int[] interval, int rightLimit, List<Integer> pointsAtLevel) {
 
-		if (interval[0] == -pointsAtLevel.size() - 1){
-			return new int[]{};
+		if (interval[0] == -pointsAtLevel.size() - 1) {
+			return new int[] {};
 		}
 		if (interval[0] == -1) {
-			if (pointsAtLevel.get(0) == rightLimit){
+			if (pointsAtLevel.get(0) == rightLimit) {
 				return new int[] { 0, 0 };
-			}else{
-				return new int[]{};
+			} else {
+				return new int[] {};
 			}
 		}
 		if (interval[0] > interval[1]) {
-			int rightBoundary = interval[0] + 1;
-			if(pointsAtLevel.get(rightBoundary) == rightLimit){
+			int rightBoundary = interval[0];
+			if (pointsAtLevel.get(rightBoundary) == rightLimit) {
 				return new int[] { rightBoundary, rightBoundary };
-			}else{
-				return new int[]{};
+			} else {
+				return new int[] {};
 			}
 		}
 		int index = interval[1] + 1;
-		return (index < pointsAtLevel.size() - 1 && pointsAtLevel.get(index) == rightLimit) ? new int[]{interval[0], index} : interval;
+		return (index <= pointsAtLevel.size() - 1 && pointsAtLevel.get(index) == rightLimit)
+				? new int[] { interval[0], index } : interval;
 
 	}
 
@@ -178,27 +164,26 @@ public class Solution {
 		}
 		int leftBoundary = pointsAtLevel.size() - 1;
 		if (interval[0] == -leftBoundary - 2) {
-			if(pointsAtLevel.get(leftBoundary) == leftLimit){
-				return new int[] {leftBoundary, leftBoundary };
-			}else{
-				return new int[]{};
+			if (pointsAtLevel.get(leftBoundary) == leftLimit) {
+				return new int[] { leftBoundary, leftBoundary };
+			} else {
+				return new int[] {};
 			}
 		}
 		if (interval[0] > interval[1]) {
-			leftBoundary = interval[1] - 1;
-			if(pointsAtLevel.get(leftBoundary) == leftLimit){
+			leftBoundary = interval[1];
+			if (pointsAtLevel.get(leftBoundary) == leftLimit) {
 				return new int[] { leftBoundary, leftBoundary };
-			}else{
-				return new int[]{};
+			} else {
+				return new int[] {};
 			}
 		}
 		int index = interval[0] - 1;
-		return (index > 0 && pointsAtLevel.get(index) == leftLimit) ? new int[]{index, interval[1]} : interval;
+		return (index >= 0 && pointsAtLevel.get(index) == leftLimit) ? new int[] { index, interval[1] } : interval;
 
 	}
 
-	static final PointShadows getPointShadow(Point point, int level, List<Integer> pointsAtLevel,
-			Set<Point> points) {
+	static final PointShadows getPointShadows(Point point, int level, List<Integer> pointsAtLevel, Set<Point> points) {
 
 		if (point.getY() >= level - 1) {
 			return PointShadows.EMPTY;
@@ -210,66 +195,15 @@ public class Solution {
 		}
 		int[] leftShadow = new int[] {};
 		int[] rightShadow = new int[] {};
-		if (point.getY() == level - 2) {
-			if (!rightClosure) {	
-				rightShadow = nearestBoundary(pointsAtLevel, point.getX() + 2);
-			}
-			if (!leftClosure) {
-				leftShadow = nearestBoundary(pointsAtLevel, point.getX() - 2);
-			}
-		} else {
-			int[] interval = pointsInShadow(new Point(point.getX(), point.getY() + 2), level, pointsAtLevel);
-			int deltaLevel = level - point.getY();
-			if (!rightClosure) {
-				rightShadow = rightClose(interval, point.getX() + deltaLevel, pointsAtLevel);
-			}
-			if (!leftClosure) {
-				leftShadow = leftClose(interval, point.getX() - deltaLevel, pointsAtLevel);
-			}
+		int[] interval = pointsInShadow(new Point(point.getX(), point.getY() + 2), level, pointsAtLevel);
+		int deltaLevel = level - point.getY();
+		if (!rightClosure) {
+			rightShadow = rightClose(interval, point.getX() + deltaLevel, pointsAtLevel);
+		}
+		if (!leftClosure) {
+			leftShadow = leftClose(interval, point.getX() - deltaLevel, pointsAtLevel);
 		}
 		return new PointShadows(leftShadow, rightShadow);
-
-	}
-
-	static final int[] nearestBoundary(List<Integer> pointsAtLevel, int limit) {
-
-		int boundary = Collections.binarySearch(pointsAtLevel, limit);
-		return (boundary > 0) ? new int[] { boundary, boundary } : new int[] {};
-
-	}
-
-	final int maxScore(Point point, Integer level) {
-
-		int[] pointsInterval;
-		if (queensAtLevel.containsKey(level)) {
-			pointsInterval = pointsInShadow(point, level, queensAtLevel.get(level));
-			if (pointsInterval.length > 0) {
-				return 10;
-			}
-		}
-		pointsInterval = pointsInShadow(point, level, board.get(level));
-		if (pointsInterval.length == 0) {
-			return 0;
-		}
-		return 1;
-
-	}
-
-	private static class XComparator implements Comparator<Point> {
-
-		@Override
-		public int compare(Point o1, Point o2) {
-			return o1.x - o2.x;
-		}
-
-	}
-
-	private static class YComparator implements Comparator<Point> {
-
-		@Override
-		public int compare(Point o1, Point o2) {
-			return o1.y - o2.y;
-		}
 
 	}
 
@@ -277,6 +211,9 @@ public class Solution {
 
 		int x;
 		int y;
+		int leftScore;
+		int rightScore;
+		int score;
 
 		public Point(int x, int y) {
 			this.x = x;
@@ -297,6 +234,30 @@ public class Solution {
 
 		public void setY(int y) {
 			this.y = y;
+		}
+
+		public int getLeftScore() {
+			return leftScore;
+		}
+
+		public void setLeftScore(int leftScore) {
+			this.leftScore = leftScore;
+		}
+
+		public int getRightScore() {
+			return rightScore;
+		}
+
+		public void setRightScore(int rightScore) {
+			this.rightScore = rightScore;
+		}
+
+		public int getScore() {
+			return score;
+		}
+
+		public void setScore(int score) {
+			this.score = score;
 		}
 
 		public int[] shadowAtLevel(int level) {
@@ -387,7 +348,55 @@ public class Solution {
 		}
 
 	}
-	
-	
+
+	static class BinarySearch {
+
+		private BinarySearch() {
+		}
+
+		@SuppressWarnings("rawtypes")
+		public static <T extends Comparable> int search(T e, List<T> orderedList) {
+			return search(e, orderedList, 0, orderedList.size() - 1);
+		}
+
+		@SuppressWarnings({ "rawtypes", "unchecked" })
+		public static <T extends Comparable> int search(T e, List<T> orderedList, int lowLimit, int upLimit) {
+
+			if (lowLimit < 0 || lowLimit > upLimit || upLimit > orderedList.size() - 1) {
+				throw new IllegalArgumentException("Invalid bounds (" + lowLimit + ", " + upLimit + ")");
+			}
+			if (e.compareTo(orderedList.get(upLimit)) > 0) {
+				return -upLimit - 2;
+			}
+			if (e.compareTo(orderedList.get(lowLimit)) < 0) {
+				return -lowLimit - 1;
+			}
+			int a = lowLimit;
+			int b = upLimit;
+			int m = (a + b) / 2;
+			int comparison;
+			while (m > a) {
+				comparison = orderedList.get(m).compareTo(e);
+				if (comparison == 0) {
+					return m;
+				}
+				if (comparison > 0) {
+					b = m;
+				} else {
+					a = m;
+				}
+				m = (a + b) / 2;
+			}
+			if (e.compareTo(orderedList.get(a)) == 0) {
+				return a;
+			}
+			if (e.compareTo(orderedList.get(a + 1)) == 0) {
+				return a + 1;
+			}
+			return -a - 2;
+
+		}
+
+	}
 
 }
