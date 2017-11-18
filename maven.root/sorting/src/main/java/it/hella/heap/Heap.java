@@ -1,13 +1,11 @@
 package it.hella.heap;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
 public class Heap<T extends Comparable> {
 
-	private static final BigDecimal ln2 = BigDecimal.valueOf(Math.log(2));
 	private List<T> list;
 
 	public Heap(List<T> list) {
@@ -64,7 +62,7 @@ public class Heap<T extends Comparable> {
 	@SuppressWarnings("unchecked")
 	public static final void buildMaxHeap(Heap heap) {
 
-		int k = heap.size() - BigDecimal.valueOf(Math.log(heap.size())).divideToIntegralValue(ln2).intValue();
+		int k = heap.size()/2;
 		for (; k >= 0; k--) {
 			maxHeapify(heap, k);
 		}
