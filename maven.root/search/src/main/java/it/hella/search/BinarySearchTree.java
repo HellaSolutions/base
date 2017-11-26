@@ -126,9 +126,6 @@ public class BinarySearchTree<T extends Comparable<T>> implements BinaryTree<T> 
 		} else {
 			parent.setRightChild(in);
 		}
-//		if (in.isPresent()){
-//			in.get().setParent(parent);
-//		}
 
 	}
 
