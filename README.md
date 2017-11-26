@@ -1,2 +1,2 @@
 # base
-Maven parent module
+Various basic algorithms and testing tools
