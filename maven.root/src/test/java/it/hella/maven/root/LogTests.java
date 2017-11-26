@@ -1,9 +1,8 @@
 package it.hella.maven.root;
 
+import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import org.junit.Test;
 
 public class LogTests {
 	

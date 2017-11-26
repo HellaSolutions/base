@@ -12,8 +12,9 @@
 	<dependencies>
 		<dependency>
 			<groupId>it.hella</groupId>
-			<artifactId>random</artifactId>
+			<artifactId>generators</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 	<build>
