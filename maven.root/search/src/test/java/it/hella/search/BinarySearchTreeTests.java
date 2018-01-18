@@ -14,19 +14,18 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Optional;
 
 import it.hella.random.RandomGenerators;
-import it.hella.search.BinaryTree.Node;
 
 public class BinarySearchTreeTests {
 
 	private static final Logger logger = LoggerFactory.getLogger(BinarySearchTreeTests.class);
 
-	private static final int NUM_RANDOM_TESTS = 100;
+	protected static final int NUM_RANDOM_TESTS = 1000;
 	private BinarySearchTree<Integer> tree;
 
 	@Before
 	public void before() {
 
-		tree = new BinarySearchTree<Integer>();
+		tree = new BinarySearchTree<>();
 
 	}
 
@@ -56,7 +55,7 @@ public class BinarySearchTreeTests {
 	public void testRandomAddSearchAndThenRemove() {
 
 		for (int i = 0; i < NUM_RANDOM_TESTS; i++) {
-			List<Integer> elements = RandomGenerators.generateDistinctList(300, 10000);
+			List<Integer> elements = RandomGenerators.generateDistinctList(100, 10000);
 			logger.debug("Random list: " + Arrays.toString(elements.toArray()));
 			for (Integer e : elements) {
 				tree.add(e);
@@ -77,9 +76,10 @@ public class BinarySearchTreeTests {
 
 	}
 
-	private void assertBinarySearchTree(BinarySearchTree<Integer> tree) {
+	public static <N extends NodeInterface<Integer, N>> void assertBinarySearchTree(
+			AbstractBinarySearchTree<Integer, N> tree) {
 
-		Optional<Node<Integer>> root = tree.getRoot();
+		Optional<N> root = tree.getRoot();
 		LinkedList<Integer> list = new LinkedList<>();
 		buildList(root, list);
 		if (!list.isEmpty()) {
@@ -90,20 +90,22 @@ public class BinarySearchTreeTests {
 		}
 	}
 
-	private void buildList(Optional<Node<Integer>> root, LinkedList<Integer> list) {
+	public static <N extends NodeInterface<Integer, N>> void buildList(Optional<N> root, LinkedList<Integer> list) {
 
 		if (root.isPresent()) {
-			Node<Integer> x = root.get();
-			if (x.getLeftChild().isPresent()){
-				assertTrue("Invalid parent for " + x.getLeftChild().get() + " should be " + x, x.getLeftChild().get().getParent().get().equals(x));
+			N x = root.get();
+			if (x.getLeftChild().isPresent()) {
+				assertTrue("Invalid parent for " + x.getLeftChild().get() + " should be " + x,
+						x.getLeftChild().get().getParent().get().equals(x));
 				buildList(x.getLeftChild(), list);
 			}
 			list.addLast(x.getKey());
-			if (x.getRightChild().isPresent()){
-				assertTrue("Invalid parent for " + x.getRightChild().get() + " should be " + x, x.getRightChild().get().getParent().get().equals(x));
+			if (x.getRightChild().isPresent()) {
+				assertTrue("Invalid parent for " + x.getRightChild().get() + " should be " + x,
+						x.getRightChild().get().getParent().get().equals(x));
 				buildList(x.getRightChild(), list);
 			}
-			
+
 		}
 
 	}
