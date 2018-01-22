@@ -102,16 +102,19 @@ public class RbBinarySearchTree<T extends Comparable<T>> extends AbstractBinaryS
 	@Override
 	public void remove(RbNode<T> z) {
 
-		Optional<CriticalPoint<T>> oCriticalPoint = removeTargetCriticalPoint(z);
+		Optional<CriticalPoint<T>> oCriticalPoint = removeAndTargetCriticalPoint(z);
 		rebalance(oCriticalPoint);
+		if (root.isPresent()) {
+			root.get().setColor(COLOR.BLACK);
+		}
 
 	}
 
-	protected Optional<CriticalPoint<T>> removeTargetCriticalPoint(RbNode<T> z) {
+	protected Optional<CriticalPoint<T>> removeAndTargetCriticalPoint(RbNode<T> z) {
 
 		CriticalPoint<T> criticalPoint;
 		Optional<RbNode<T>> optSubstitute;
-		boolean leftPresent = z.getRightChild().isPresent();
+		boolean leftPresent = z.getLeftChild().isPresent();
 		boolean rightPresent = z.getRightChild().isPresent();
 		if (!(leftPresent && rightPresent)) {
 			criticalPoint = new CriticalPoint<>(z.getParent(), !z.isLeftChild());
@@ -150,74 +153,192 @@ public class RbBinarySearchTree<T extends Comparable<T>> extends AbstractBinaryS
 	private void rebalance(Optional<CriticalPoint<T>> oCriticalPoint) {
 
 		if (oCriticalPoint.isPresent() && oCriticalPoint.get().node.isPresent()) {
-			RbNode<T> criticalPoint = oCriticalPoint.get().getNode().get();
+			RbNode<T> criticalNode = oCriticalPoint.get().getNode().get();
 			boolean leftHeavy = oCriticalPoint.get().isLeftHeavy();
-			Optional<RbNode<T>> lighterChild = leftHeavy ? criticalPoint.getRightChild() : criticalPoint.getLeftChild();
+			Optional<RbNode<T>> lighterChild = leftHeavy ? criticalNode.getRightChild() : criticalNode.getLeftChild();
 			if (lighterChild.isPresent()) {
 				lighterChild.get().setColor(COLOR.BLACK);
 				return;
 			}
 			if (leftHeavy) {
-				leftRebalance(criticalPoint);
+				leftRebalance(criticalNode);
 			} else {
-				rightRebalance(criticalPoint);
+				rightRebalance(criticalNode);
 			}
 
 		}
 	}
 
-	private void rightRebalance(RbNode<T> criticalPoint) {
+	private void rightRebalance(RbNode<T> criticalNode) {
 
-		Optional<RbNode<T>> oHeavierChild = criticalPoint.getRightChild();
+		Optional<RbNode<T>> oHeavierChild = criticalNode.getRightChild();
 		if (!oHeavierChild.isPresent()) {
-			throw new IllegalStateException("Critical point without heavier child: " + criticalPoint);
+			throw new IllegalStateException("Critical point without heavier child: " + criticalNode);
 		}
 		RbNode<T> heavierChild = oHeavierChild.get();
 		boolean leftPresent = heavierChild.getLeftChild().isPresent();
 		boolean rightPresent = heavierChild.getRightChild().isPresent();
-		if (!(leftPresent || rightPresent)) {
+		COLOR criticalNodeColor = criticalNode.getColor();
+		if (leftPresent || rightPresent) {
+			if (heavierChild.getColor() == COLOR.RED) {
+				heavierChild.setColor(COLOR.BLACK);
+				leftRotate(criticalNode);
+				heavierChild = criticalNode.getRightChild().get();
+				leftPresent = heavierChild.getLeftChild().isPresent();
+				rightPresent = heavierChild.getRightChild().isPresent();
+				if (!(leftPresent || rightPresent)) {
+					heavierChild.setColor(COLOR.RED);
+					return;
+				}
+				criticalNodeColor = COLOR.RED;
+			}
+			if (!rightPresent) {
+				rightRotate(heavierChild);
+				heavierChild = heavierChild.getParent().get();
+			}
+			leftRotate(criticalNode);
+			heavierChild.setColor(criticalNodeColor);
+			criticalNode.setColor(COLOR.BLACK);
+			heavierChild.getRightChild().get().setColor(COLOR.BLACK);
+			if (criticalNode.getRightChild().isPresent()) {
+				criticalNode.getRightChild().get().setColor(COLOR.RED);
+			}
+		} else {
 			heavierChild.setColor(COLOR.RED);
-			redPropertyRebuild(heavierChild);
-			return;
-		}
-		if (!rightPresent) {
-			rightRotate(heavierChild);
-			heavierChild = heavierChild.getParent().get();
-		}
-		leftRotate(criticalPoint);
-		heavierChild.setColor(criticalPoint.getColor());
-		criticalPoint.setColor(COLOR.BLACK);
-		heavierChild.getRightChild().get().setColor(COLOR.BLACK);
-		if (criticalPoint.getRightChild().isPresent()) {
-			criticalPoint.getRightChild().get().setColor(COLOR.RED);
+			if (criticalNode.getColor() == COLOR.RED) {
+				criticalNode.setColor(COLOR.BLACK);
+			} else {
+				iterativeRebalance(new CriticalPoint<>(criticalNode.getParent(), !criticalNode.isLeftChild()));
+			}
 		}
 
 	}
 
-	private void leftRebalance(RbNode<T> criticalPoint) {
+	private void leftRebalance(RbNode<T> criticalNode) {
 
-		Optional<RbNode<T>> oHeavierChild = criticalPoint.getLeftChild();
+		Optional<RbNode<T>> oHeavierChild = criticalNode.getLeftChild();
 		if (!oHeavierChild.isPresent()) {
-			throw new IllegalStateException("Critical point without heavier child: " + criticalPoint);
+			throw new IllegalStateException("Critical point without heavier child: " + criticalNode);
 		}
 		RbNode<T> heavierChild = oHeavierChild.get();
 		boolean leftPresent = heavierChild.getLeftChild().isPresent();
 		boolean rightPresent = heavierChild.getRightChild().isPresent();
-		if (!(leftPresent || rightPresent)) {
+		COLOR criticalNodeColor = criticalNode.getColor();
+		if (leftPresent || rightPresent) {
+			if (heavierChild.getColor() == COLOR.RED) {
+				heavierChild.setColor(COLOR.BLACK);
+				rightRotate(criticalNode);
+				heavierChild = criticalNode.getLeftChild().get();
+				leftPresent = heavierChild.getLeftChild().isPresent();
+				rightPresent = heavierChild.getRightChild().isPresent();
+				if (!(leftPresent || rightPresent)) {
+					heavierChild.setColor(COLOR.RED);
+					return;
+				}
+				criticalNodeColor = COLOR.RED;
+			}
+			if (!leftPresent) {
+				leftRotate(heavierChild);
+				heavierChild = heavierChild.getParent().get();
+			}
+			rightRotate(criticalNode);
+			heavierChild.setColor(criticalNodeColor);
+			criticalNode.setColor(COLOR.BLACK);
+			heavierChild.getLeftChild().get().setColor(COLOR.BLACK);
+			if (criticalNode.getLeftChild().isPresent()) {
+				criticalNode.getLeftChild().get().setColor(COLOR.RED);
+			}
+		} else {
 			heavierChild.setColor(COLOR.RED);
-			redPropertyRebuild(heavierChild);
+			if (criticalNode.getColor() == COLOR.RED) {
+				criticalNode.setColor(COLOR.BLACK);
+			} else {
+				iterativeRebalance(new CriticalPoint<>(criticalNode.getParent(), !criticalNode.isLeftChild()));
+			}
+		}
+	}
+
+	private void iterativeRebalance(CriticalPoint<T> criticalNode) {
+
+		if (criticalNode.node.isPresent()) {
+			if (criticalNode.leftHeavy) {
+				leftIterativeRebalance(criticalNode.node.get());
+			} else {
+				rightIterativeRebalance(criticalNode.node.get());
+			}
+		}
+
+	}
+
+	private void leftIterativeRebalance(RbNode<T> criticalNode) {
+
+		Optional<RbNode<T>> oLighterChild = criticalNode.getRightChild();
+		if (oLighterChild.isPresent() && oLighterChild.get().getColor() == COLOR.RED) {
+			oLighterChild.get().setColor(COLOR.BLACK);
 			return;
 		}
-		if (!leftPresent) {
-			leftRotate(heavierChild);
-			heavierChild = heavierChild.getParent().get();
+		Optional<RbNode<T>> oHeavierChild = criticalNode.getLeftChild();
+		if (!oHeavierChild.isPresent()) {
+			throw new IllegalStateException("Critical point without heavier child: " + criticalNode);
 		}
-		rightRotate(criticalPoint);
-		heavierChild.setColor(criticalPoint.getColor());
-		criticalPoint.setColor(COLOR.BLACK);
-		heavierChild.getLeftChild().get().setColor(COLOR.BLACK);
-		if (criticalPoint.getLeftChild().isPresent()) {
-			heavierChild.getLeftChild().get().setColor(COLOR.RED);
+		RbNode<T> heavierChild = oHeavierChild.get();
+		if (heavierChild.getColor() == COLOR.BLACK) {
+			COLOR originalCriticalNodeColor = criticalNode.getColor();
+			Optional<RbNode<T>> optHeavierChildRightChild = heavierChild.getRightChild();
+			if ((!optHeavierChildRightChild.isPresent()) || optHeavierChildRightChild.get().getColor() == COLOR.BLACK) {
+				rightRotate(criticalNode);
+				criticalNode.setColor(COLOR.RED);
+				criticalNode = heavierChild;
+			} else {
+				leftRotate(heavierChild);
+				rightRotate(criticalNode);
+				criticalNode.setColor(COLOR.BLACK);
+				criticalNode = optHeavierChildRightChild.get();
+				criticalNode.setColor(COLOR.RED);
+			}
+			if (originalCriticalNodeColor == COLOR.BLACK) {
+				iterativeRebalance(new CriticalPoint<>(criticalNode.getParent(), !criticalNode.isLeftChild()));
+			}
+		} else {
+			rightRotate(criticalNode);
+			heavierChild.setColor(COLOR.BLACK);
+			criticalNode.setColor(COLOR.RED);
+			leftIterativeRebalance(criticalNode);
+		}
+
+	}
+
+	private void rightIterativeRebalance(RbNode<T> criticalNode) {
+
+		Optional<RbNode<T>> oLighterChild = criticalNode.getLeftChild();
+		if (oLighterChild.isPresent() && oLighterChild.get().getColor() == COLOR.RED) {
+			oLighterChild.get().setColor(COLOR.BLACK);
+			return;
+		}
+		Optional<RbNode<T>> oHeavierChild = criticalNode.getRightChild();
+		RbNode<T> heavierChild = oHeavierChild.get();
+		if (heavierChild.getColor() == COLOR.BLACK) {
+			COLOR originalCriticalNodeColor = criticalNode.getColor();
+			Optional<RbNode<T>> optHeavierChildLeftChild = heavierChild.getLeftChild();
+			if ((!optHeavierChildLeftChild.isPresent()) || optHeavierChildLeftChild.get().getColor() == COLOR.BLACK) {
+				leftRotate(criticalNode);
+				criticalNode.setColor(COLOR.RED);
+				criticalNode = heavierChild;
+			} else {
+				rightRotate(heavierChild);
+				leftRotate(criticalNode);
+				criticalNode.setColor(COLOR.BLACK);
+				criticalNode = optHeavierChildLeftChild.get();
+				criticalNode.setColor(COLOR.RED);
+			}
+			if (originalCriticalNodeColor == COLOR.BLACK) {
+				iterativeRebalance(new CriticalPoint<>(criticalNode.getParent(), !criticalNode.isLeftChild()));
+			}
+		} else {
+			leftRotate(criticalNode);
+			heavierChild.setColor(COLOR.BLACK);
+			criticalNode.setColor(COLOR.RED);
+			rightIterativeRebalance(criticalNode);
 		}
 
 	}

@@ -54,6 +54,49 @@ public class RbBinarySearchTreeTests extends BinarySearchTreeTests {
 	}
 
 	@Test
+	public void testBaseReverseRemoval() {
+
+		List<Integer> elements = Arrays.asList(30, 21, 5, 48, 15, 34, 3, 17, 35, 43);
+		for (Integer e : elements) {
+			tree.add(e);
+		}
+		elements = Arrays.asList(43, 35, 17, 3, 34, 15, 48, 5, 21, 30);
+		assertRedAndBlackTree(tree);
+		logger.debug(tree.toString());
+		for (Integer e : elements) {
+			logger.debug("removing: " + e);
+			Optional<RbNode<Integer>> n = tree.search(e);
+			assertTrue("element not found: " + e, n.isPresent());
+			tree.remove(n.get());
+			logger.debug(tree.toString());
+			assertRedAndBlackTree(tree);
+		}
+		tree.clear();
+
+	}
+
+	@Test
+	public void testBase2() {
+
+		List<Integer> elements = Arrays.asList(59, 20, 63, 81, 57, 54, 87, 28, 5, 13, 8);
+		for (Integer e : elements) {
+			tree.add(e);
+		}
+		assertRedAndBlackTree(tree);
+		logger.debug(tree.toString());
+		for (Integer e : elements) {
+			logger.debug("removing: " + e);
+			Optional<RbNode<Integer>> n = tree.search(e);
+			assertTrue("element not found: " + e, n.isPresent());
+			tree.remove(n.get());
+			logger.debug(tree.toString());
+			assertRedAndBlackTree(tree);
+		}
+		tree.clear();
+
+	}
+
+	@Test
 	public void testBaseCriticalPointProperties() {
 
 		List<Integer> elements = Arrays.asList(30, 21, 5, 48, 15, 34, 3, 17, 35, 43);
@@ -66,7 +109,7 @@ public class RbBinarySearchTreeTests extends BinarySearchTreeTests {
 			logger.debug("removing: " + e);
 			Optional<RbNode<Integer>> n = tree.search(e);
 			assertTrue("element not found: " + e, n.isPresent());
-			Optional<CriticalPoint<Integer>> critical = tree.removeTargetCriticalPoint(n.get());
+			Optional<CriticalPoint<Integer>> critical = tree.removeAndTargetCriticalPoint(n.get());
 			logger.debug(tree.toString());
 			assertCriticalPointProperties(critical);
 			assertBinarySearchTree(tree);
@@ -77,8 +120,10 @@ public class RbBinarySearchTreeTests extends BinarySearchTreeTests {
 
 	public static void assertRedAndBlackTree(RbBinarySearchTree<Integer> tree) {
 		assertBinarySearchTree(tree);
-		assertEquals("Root is not colored BLACK", COLOR.BLACK, tree.getRoot().get().getColor());
-		assertRedBlackRules(tree.getRoot());
+		if (tree.getRoot().isPresent()) {
+			assertEquals("Root is not colored BLACK", COLOR.BLACK, tree.getRoot().get().getColor());
+			assertRedBlackRules(tree.getRoot());
+		}
 	}
 
 	public static int assertRedBlackRules(Optional<RbNode<Integer>> node) {
@@ -125,7 +170,7 @@ public class RbBinarySearchTreeTests extends BinarySearchTreeTests {
 	public void testRandomAddSearchAndThenRemoveAndTargetCriticalPoint() {
 
 		for (int i = 0; i < NUM_RANDOM_TESTS; i++) {
-			List<Integer> elements = RandomGenerators.generateDistinctList(100, 10000);
+			List<Integer> elements = RandomGenerators.generateDistinctList(10, 10000);
 			logger.debug("Random list: " + Arrays.toString(elements.toArray()));
 			logger.debug("tree\n" + tree);
 			for (Integer e : elements) {
@@ -136,7 +181,7 @@ public class RbBinarySearchTreeTests extends BinarySearchTreeTests {
 				Optional<RbNode<Integer>> n = tree.search(e);
 				assertTrue("element not found: " + e, n.isPresent());
 				logger.debug("removing: " + e);
-				Optional<CriticalPoint<Integer>> critical = tree.removeTargetCriticalPoint(n.get());
+				Optional<CriticalPoint<Integer>> critical = tree.removeAndTargetCriticalPoint(n.get());
 				assertCriticalPointProperties(critical);
 				logger.debug("tree\n" + tree);
 				assertBinarySearchTree(tree);
@@ -152,7 +197,7 @@ public class RbBinarySearchTreeTests extends BinarySearchTreeTests {
 	public void testRandomAddSearchAndThenRemove() {
 
 		for (int i = 0; i < NUM_RANDOM_TESTS; i++) {
-			List<Integer> elements = RandomGenerators.generateDistinctList(100, 10000);
+			List<Integer> elements = RandomGenerators.generateDistinctList(100, 1000);
 			logger.debug("Random list: " + Arrays.toString(elements.toArray()));
 			for (Integer e : elements) {
 				tree.add(e);

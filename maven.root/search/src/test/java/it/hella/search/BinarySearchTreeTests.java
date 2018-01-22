@@ -19,7 +19,7 @@ public class BinarySearchTreeTests {
 
 	private static final Logger logger = LoggerFactory.getLogger(BinarySearchTreeTests.class);
 
-	protected static final int NUM_RANDOM_TESTS = 1000;
+	protected static final int NUM_RANDOM_TESTS = 100;
 	private BinarySearchTree<Integer> tree;
 
 	@Before
